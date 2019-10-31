@@ -24,6 +24,7 @@ class FutError(RuntimeError):
         self.code = code
         self.reason = reason
         self.string = string
+        self.IsBanned = code in (426, 521)
 
 
 class UnknownError(FutError):

@@ -319,8 +319,7 @@ class Core(object):
         logger(save=debug)  # init root logger
         self.logger = logger(__name__)
         # TODO: validate fut request response (200 OK)
-        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate,
-                        proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
+        self.__launch__(email, passwd, secret_answer, platform=platform, code=code, totp=totp, sms=sms, emulate=emulate, proxies=proxies, anticaptcha_client_key=anticaptcha_client_key)
 
     def __login__(self, email, passwd, code=None, totp=None, sms=False):
         """Log in - needed only if we don't have access token or it's expired."""
@@ -579,7 +578,7 @@ class Core(object):
             raise FutError(reason='Error during login process (no persona found).')
 
         # authorization
-        
+
         # TODO?: with proper saved session we might start here
         del self.r.headers['Easw-Session-Data-Nucleus-Id']
         self.r.headers['Origin'] = 'http://www.easports.com'
@@ -595,13 +594,13 @@ class Core(object):
         path = os.path.dirname(os.path.abspath(__file__))
         dsCMD = 'cd ' + path + ' && node ds.js ' + auth_code + ' ' + game_sku + ' ' + self.access_token
         ds = os.popen(dsCMD).read()
-        
+
         #postAuth
         self.r.headers['Content-Type'] = 'application/json'
         data = {'isReadOnly': 'false',
                 'sku': self.sku,
                 'clientVersion': clientVersion,
-                'ds': ds, 
+                'ds': ds,
                 'nucleusPersonaId': self.persona_id,
                 'gameSku': game_sku,
                 'locale': 'en-US',
@@ -791,10 +790,8 @@ class Core(object):
                 raise ExpiredSession()
             elif rc.status_code == 409:
                 raise Conflict()
-            elif rc.status_code == 426:
-                raise FutError('426 Too many requests')
-            elif rc.status_code == 429:
-                raise FutError('429 Too many requests')
+            elif rc.status_code in (426, 429):
+                raise FutError(426, 'Too many requests')
             elif rc.status_code == 458:
                 print(rc.headers)
                 print(rc.status_code)
@@ -813,7 +810,7 @@ class Core(object):
             elif rc.status_code == 494:
                 raise MarketLocked()
             elif rc.status_code in (512, 521):
-                raise FutError('512/521 Temporary ban or just too many requests.')
+                raise FutError(521, '512/521 Temporary ban or just too many requests.')
             elif rc.status_code == 478:
                 raise NoTradeExistingError()
             # it makes sense to print headers, status_code, etc. only when we don't know what happened

@@ -5,9 +5,12 @@ try:
 except ImportError:
     from distutils.core import setup
 
+from distutils.command.install import INSTALL_SCHEMES
+for scheme in INSTALL_SCHEMES.values():
+    scheme['data'] = scheme['purelib']
 
 __title__ = 'fut'
-__version__ = '0.4.2'
+__version__ = '0.4.3'
 __author__ = 'Piotr Staroszczyk'
 __author_email__ = 'piotr.staroszczyk@get24.org'
 __license__ = 'GNU GPL v3'
@@ -38,7 +41,8 @@ setup(
     platforms='any',
     keywords='%s fifa ultimate team ut pc xbox android ios 360 ps3 playstation' % __title__,
     packages=packages,
-    package_data={'': ['LICENSE']},
+    data_files=[('', ['fut/ds.js'])],
+    package_data={'fut': ['LICENSE']},
     package_dir={__title__: __title__},
     include_package_data=True,
     install_requires=requires,
